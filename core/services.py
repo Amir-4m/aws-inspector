@@ -18,7 +18,7 @@ class DBService(object):
     BASE_DIR = Path(__file__).resolve().parent.parent
 
     def __init__(self, db_name):
-        self.engine = create_engine(f'sqlite:///{self.BASE_DIR}/{db_name}.db', echo=True)
+        self.engine = create_engine(f'sqlite:///{self.BASE_DIR}/{db_name}.db')
         self.meta = MetaData()
         self.table_name = 'Servers'
         self.conn = self.engine.connect()

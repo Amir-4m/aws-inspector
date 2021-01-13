@@ -3,9 +3,6 @@ services:
   app:
     container_name: "aws_inspector"
     build: .
-    env_file:
-      - ./.env
-    ports:
-      - 8000:8000
+#    command: "tail -f /var/log/cron.log"
     volumes:
       - .:/src/
