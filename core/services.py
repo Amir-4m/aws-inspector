@@ -44,7 +44,7 @@ class DBService(object):
 
 class APIService(object):
     HEADERS = {
-        'Authorization': AWS_PROXY_API_TOKEN,
+        'Authorization': f'JWT {AWS_PROXY_API_TOKEN}',
     }
 
     SERVER_INSPECT_URL = f'{AWS_PROXY_API}/api/v1/inspectors/inspected-server/'
