@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
 
-import logging
-import sys
-
 import requests
 
 from pathlib import Path
@@ -10,8 +7,9 @@ from pathlib import Path
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, text
 
 from core.consts import AWS_PROXY_API, AWS_PROXY_API_TOKEN
+from core.logger import Logger
 
-logger = logging.getLogger(__name__)
+logger = Logger()
 
 
 class DBService(object):
@@ -52,21 +50,21 @@ class APIService(object):
 
     def custom_request(self, url, method='post', **kwargs):
         try:
-            logger.debug(f"[making request]-[method: {method}]-[URL: {url}]-[kwargs: {kwargs}]")
+            logger.info(f"[making request]-[method: {method}]-[URL: {url}]-[kwargs: {kwargs}]")
             response = requests.request(method, url, headers=self.HEADERS, **kwargs)
             response.raise_for_status()
             result = response.json()
         except requests.exceptions.HTTPError as e:
-            sys.stderr.write(
+            logger.error(
                 f'[making request failed]-[response err: {e.response.text}]-[status code: {e.response.status_code}]'
                 f'-[URL: {url}]-[exc: {e}]'
             )
             raise Exception(e.response.text)
         except requests.exceptions.ConnectTimeout as e:
-            sys.stderr.write(f'[request failed]-[URL: {url}]-[exc: {e}]')
+            logger.error(f'[request failed]-[URL: {url}]-[exc: {e}]')
             raise
         except Exception as e:
-            sys.stderr.write(f'[request failed]-[URL: {url}]-[exc: {e}]')
+            logger.error(f'[request failed]-[URL: {url}]-[exc: {e}]')
             raise
         return result
 
