@@ -47,6 +47,7 @@ class APIService(object):
 
     SERVER_INSPECT_URL = f'{AWS_PROXY_API}/api/v1/inspectors/inspected-server/'
     SERVER_LIST_URL = f'{AWS_PROXY_API}/api/v1/inspectors/inquiry-server/'
+    IP_INFO_URL = 'http://ip-api.com/json/'
 
     def custom_request(self, url, method='post', **kwargs):
         try:
@@ -73,3 +74,6 @@ class APIService(object):
 
     def post_server_status(self, data):
         return self.custom_request(url=self.SERVER_INSPECT_URL, method='post', json=data)
+
+    def get_ip_info(self):
+        return self.custom_request(self.IP_INFO_URL, method='get')

@@ -61,10 +61,13 @@ def check_server_connection():
             logger.info(
                 f'[posting server status to api]-[id: {server["id"]}]-[hash_key: {server["hash_key"]}]-[is_active: {ping_status}]'
             )
+            ip_res = APIService().get_ip_info()
             APIService().post_server_status(data={
                 "hash_key": server['hash_key'],
                 "server": server['id'],
-                "is_active": ping_status
+                "is_active": ping_status,
+                "ip": ip_res['query'],
+                "isp": ip_res['org']
             })
             logger.info(f'[inserting data to database]-[id: {server["id"]}]-[hash_key: {server["hash_key"]}]')
             db.insert(server['id'], server['hash_key'])
