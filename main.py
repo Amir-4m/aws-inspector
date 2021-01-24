@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import json
 import os
 import re
 import subprocess
@@ -51,6 +52,15 @@ def check_server_connection():
     db = DBService('inspector')
     response = APIService().get_servers_list()
     logger.info(f'[getting servers list]')
+    try:
+        isp = APIService().get_ip_info()['org']
+    except Exception as e:
+        logger.info(f'[could not catch ip info. trying ip cache file ...]-[exc: {e}]')
+        if os.path.isfile('ip_info.json'):
+            with open('ip_info.json') as file:
+                isp = json.load(file)['org']
+        else:
+            isp = ''
     for server in response:
         try:
             if db.exists(server['id'], server['hash_key']):
@@ -61,13 +71,12 @@ def check_server_connection():
             logger.info(
                 f'[posting server status to api]-[id: {server["id"]}]-[hash_key: {server["hash_key"]}]-[is_active: {ping_status}]'
             )
-            ip_res = APIService().get_ip_info()
             APIService().post_server_status(data={
                 "hash_key": server['hash_key'],
                 "server": server['id'],
                 "is_active": ping_status,
-                "ip": ip_res['query'],
-                "isp": ip_res['org']
+                "ip": server['ip'],
+                "isp": isp
             })
             logger.info(f'[inserting data to database]-[id: {server["id"]}]-[hash_key: {server["hash_key"]}]')
             db.insert(server['id'], server['hash_key'])

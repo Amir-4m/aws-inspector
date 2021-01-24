@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import json
 
 import requests
 
@@ -76,4 +77,7 @@ class APIService(object):
         return self.custom_request(url=self.SERVER_INSPECT_URL, method='post', json=data)
 
     def get_ip_info(self):
-        return self.custom_request(self.IP_INFO_URL, method='get')
+        res = self.custom_request(self.IP_INFO_URL, method='get')
+        with open('ip_info.json', 'w') as file:
+            json.dump(res, file)
+        return res
