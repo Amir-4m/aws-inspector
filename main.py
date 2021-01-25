@@ -76,7 +76,7 @@ def check_server_connection():
                 "server": server['id'],
                 "is_active": ping_status,
                 "ip": server['ip'],
-                "isp": isp
+                "received_isp": isp
             })
             logger.info(f'[inserting data to database]-[id: {server["id"]}]-[hash_key: {server["hash_key"]}]')
             db.insert(server['id'], server['hash_key'])
