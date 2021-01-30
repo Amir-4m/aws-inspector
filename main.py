@@ -66,15 +66,17 @@ def check_server_connection():
             if db.exists(server['id'], server['hash_key']):
                 logger.info(f'[server exists in database]-[id: {server["id"]}]-[hash_key: {server["hash_key"]}]')
                 continue
-
-            ping_status = nc(server['ip'], SERVER_PORT) or pinged(server['ip'])
+            ping_result = []
+            for port in server['ports']:
+                ping_result.append(nc(server['ip'], port) or pinged(server['ip']))
+            active_status = all(ping_result)
             logger.info(
-                f'[posting server status to api]-[id: {server["id"]}]-[hash_key: {server["hash_key"]}]-[is_active: {ping_status}]'
+                f'[posting server status to api]-[id: {server["id"]}]-[hash_key: {server["hash_key"]}]-[is_active: {active_status}]'
             )
             APIService().post_server_status(data={
                 "hash_key": server['hash_key'],
                 "server": server['id'],
-                "is_active": ping_status,
+                "is_active": active_status,
                 "ip": server['ip'],
                 "received_isp": isp
             })
