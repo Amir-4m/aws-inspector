@@ -58,13 +58,13 @@ def check_server_connection():
     if os.path.isfile('ip_info.json'):
         with open('ip_info.json') as file:
             try:
-                isp = json.load(file)['org']
+                isp = json.load(file)['isp']
             except Exception as e:
                 logger.info(f'[could not catch ip from file]-[exc: {e}]')
 
     if isp == '':
         try:
-            isp = APIService().get_ip_info()['org']
+            isp = APIService().get_ip_info()['isp']
         except Exception as e:
             logger.info(f'[could not catch ip from API]-[exc: {e}]')
 
