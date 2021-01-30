@@ -52,15 +52,22 @@ def check_server_connection():
     db = DBService('inspector')
     response = APIService().get_servers_list()
     logger.info(f'[getting servers list]')
-    try:
-        isp = APIService().get_ip_info()['org']
-    except Exception as e:
-        logger.info(f'[could not catch ip info. trying ip cache file ...]-[exc: {e}]')
-        if os.path.isfile('ip_info.json'):
-            with open('ip_info.json') as file:
+
+    isp = ''
+    #TODO: make this a expirational cache instead of file
+    if os.path.isfile('ip_info.json'):
+        with open('ip_info.json') as file:
+            try:
                 isp = json.load(file)['org']
-        else:
-            isp = ''
+            except Exception as e:
+                logger.info(f'[could not catch ip from file]-[exc: {e}]')
+
+    if isp == '':
+        try:
+            isp = APIService().get_ip_info()['org']
+        except Exception as e:
+            logger.info(f'[could not catch ip from API]-[exc: {e}]')
+
     for server in response:
         try:
             if db.exists(server['id'], server['hash_key']):
