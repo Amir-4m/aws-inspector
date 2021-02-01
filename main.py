@@ -54,7 +54,7 @@ def check_server_connection():
     logger.info(f'[getting servers list]')
 
     isp = ''
-    #TODO: make this a expirational cache instead of file
+    # TODO: make this a expirational cache instead of file
     if os.path.isfile('ip_info.json'):
         with open('ip_info.json') as file:
             try:
@@ -75,8 +75,9 @@ def check_server_connection():
                 continue
             ping_result = []
             for port in server['ports']:
-                ping_result.append(nc(server['ip'], port) or pinged(server['ip']))
-            active_status = all(ping_result)
+                ping_result.append(nc(server['ip'], port))
+
+            active_status = all(ping_result) and pinged(server['ip'])
             logger.info(
                 f'[posting server status to api]-[id: {server["id"]}]-[hash_key: {server["hash_key"]}]-[is_active: {active_status}]'
             )
